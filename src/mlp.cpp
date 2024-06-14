@@ -99,11 +99,7 @@ class MLP
 
         double evaluate(vector<vector<double>> x, vector<vector<double>> y) {
             vector<vector<double>> results = this->forward(x);
-            cout << "Here're the predictions: \n";
-            printMatrix(results);
-            cout << "\n And here are the real outputs: \n";
-            printMatrix(y);
-            double accuracy = 0;
+            double accuracy = 0.0;
             vector<int> correct_args = argmax(y);
             vector<int> predicted_args = argmax(results);
 
