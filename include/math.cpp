@@ -6,7 +6,7 @@
 // Global random number generator and distribution
 std::random_device rd;
 std::mt19937 gen(rd());
-std::uniform_real_distribution<> dis(-0.1, 0.1);
+std::uniform_real_distribution<> dis(-1.0, 1.0);
 
 std::vector<std::vector<double>> Multiply_matrices(const std::vector<std::vector<double>>& A, const std::vector<std::vector<double>>& B) {
     if (A[0].size() != B.size()) {

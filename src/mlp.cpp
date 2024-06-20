@@ -41,10 +41,11 @@ class MLP
         double cross_entropy_loss(vector<vector<double>> preds, vector<vector<double>> true_vals) {
 
             double loss = 0.0;
+            double loss_const = 1e-9;
 
             for(int i = 0; i<preds.size(); i++){
                 for(int j = 0; j<preds[0].size(); j++) {
-                    loss += -true_vals[i][j] * log(preds[i][j]);
+                    loss += -true_vals[i][j] * log(preds[i][j] + loss_const);
                 }
             }
 

@@ -54,7 +54,7 @@ int main() {
     vector<vector<double>> test_set_y;
 
     // Train test split
-    int training_size = 400;
+    int training_size = 200;
 
     for(int i = 0; i<training_size; i++){
         train_set_x.push_back(x[i]);
@@ -69,10 +69,10 @@ int main() {
 
     // Hyperparams
     int input_features = x[0].size();
-    int num_neurons = 24;
+    int num_neurons = 20;
     int output_dim = 10;
-    double learning_rate = 2e-4;
-    string activations = "RELU";
+    double learning_rate = 1e-3;
+    string activations = "Sigmoid";
 
     cout << "Training set size: (" << train_set_x.size() << ", " << train_set_x[0].size() << ") \n";
 
