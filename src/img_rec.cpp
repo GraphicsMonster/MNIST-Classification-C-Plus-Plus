@@ -29,7 +29,7 @@ int main() {
         string val;
         stringstream s(line);
         while(getline(s, val, ',')){
-            row.push_back(stod(val)/784.0);
+            row.push_back(stod(val)/255.0); // Switched normalization from 784 tyo 255(max pixel value)
         }
         y.push_back(row[0]);
         row.erase(row.begin());
@@ -38,14 +38,14 @@ int main() {
 
     // Normalized the lables too lol. Bugged me for hours. Fixed it here.
     for(int i = 0; i<y.size(); i++){
-        y[i] *= 784.0;
+        y[i] *= 255.0;
     }
 
     // One hot encoding the labels
     vector<vector<double>> one_hot_labels(y.size(), vector<double>(10, 0));
 
     for(int i = 0; i<y.size(); i++){
-        one_hot_labels[i][y[i-1]] = 1;
+        one_hot_labels[i][static_cast<int>(y[i])] = 1;
     }
 
     vector<vector<double>> train_set_x;
@@ -71,15 +71,15 @@ int main() {
     int input_features = x[0].size();
     int num_neurons = 20;
     int output_dim = 10;
-    double learning_rate = 1e-3;
-    string activations = "Sigmoid";
+    double learning_rate = 1e-4;
+    string activations = "Tanh";
 
     cout << "Training set size: (" << train_set_x.size() << ", " << train_set_x[0].size() << ") \n";
 
     MLP model = MLP(input_features, num_neurons, output_dim, learning_rate, activations);
 
     // Training the model
-    model.train(100, learning_rate, train_set_x, train_set_y);
+    model.train(500, learning_rate, train_set_x, train_set_y);
 
     // Evaluation
     double accuracy = model.evaluate(test_set_x, test_set_y) * 100;

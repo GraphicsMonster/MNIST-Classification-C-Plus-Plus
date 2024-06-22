@@ -1,12 +1,10 @@
 #include "math.hpp"
 #include <random>
 #include <iostream>
+#include <chrono>
 
-
-// Global random number generator and distribution
-std::random_device rd;
-std::mt19937 gen(rd());
-std::uniform_real_distribution<> dis(-1.0, 1.0);
+// Global random number generator
+std::mt19937 gen(std::chrono::system_clock::now().time_since_epoch().count());
 
 std::vector<std::vector<double>> Multiply_matrices(const std::vector<std::vector<double>>& A, const std::vector<std::vector<double>>& B) {
     if (A[0].size() != B.size()) {
@@ -95,12 +93,6 @@ std::vector<std::vector<double>> Add_biases(const std::vector<std::vector<double
     }
 
     return result;
-}
-
-
-
-double getRandomDouble() {
-    return dis(gen);
 }
 
 double getXavierValue(int input_dim, int output_dim) {

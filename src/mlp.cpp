@@ -25,7 +25,7 @@ class MLP
 
             this->fc1 = FCLayer(input_dim, num_neurons, activations);
             this->fc2 = FCLayer(num_neurons, num_neurons, activations);
-            this->fc3 = FCLayer(num_neurons, output_dim, activations);
+            this->fc3 = FCLayer(num_neurons, output_dim, "Softmax"); // To generate a probability distribution across all the classes. Need to also update backprop to incorporate derivative of softmax.
         }
 
         vector<vector<double>> forward(vector<vector<double>> x)
@@ -34,22 +34,21 @@ class MLP
             vector<vector<double>> out = fc1.forward(x);
             out = fc2.forward(out);
             out = fc3.forward(out);
-            out = Softmax(out); // To generate a probability distribution across all the classes. Need to also update backprop to incorporate derivative of softmax.
             return out;
         }
 
-        double cross_entropy_loss(vector<vector<double>> preds, vector<vector<double>> true_vals) {
+        double cross_entropy_loss(vector<vector<double>>& preds, vector<vector<double>>& true_vals) {
 
             double loss = 0.0;
-            double loss_const = 1e-9;
+            double epsilon = 1e-15;  // Small value to prevent log(0)
 
-            for(int i = 0; i<preds.size(); i++){
-                for(int j = 0; j<preds[0].size(); j++) {
-                    loss += -true_vals[i][j] * log(preds[i][j] + loss_const);
+            for(size_t i = 0; i < preds.size(); i++) {
+                for(size_t j = 0; j < preds[i].size(); j++) {
+                loss -= true_vals[i][j] * log(max(preds[i][j], epsilon));
                 }
             }
 
-            return loss/preds.size();
+            return loss / preds.size();
         }
 
         double get_classification_loss(vector<vector<double>> x, vector<vector<double>> val){
@@ -84,6 +83,16 @@ class MLP
             this->fc1.update_params(learning_rate);
         }
 
+        void log_max_values(const vector<vector<double>>& matrix, const string& name) {
+            double max_val = 0;
+            for (const auto& row : matrix) {
+                for (const auto& val : row) {
+                max_val = max(max_val, abs(val));
+                }
+            }
+            cout << "Max " << name << ": " << max_val << endl;
+        }
+
         void train(int num_epochs, double learning_rate, vector<vector<double>> x, vector<vector<double>> y){
             this->learning_rate = learning_rate;
 
@@ -94,6 +103,10 @@ class MLP
 
                 if((epoch+1) % 10 == 0){
                     cout << "Epoch: " << (epoch+1) << " || Loss: " << loss << "\n";
+                    log_max_values(fc1.get_weights(), "fc1 weights");
+                    log_max_values(fc2.get_weights(), "fc2 weights");
+                    log_max_values(fc3.get_weights(), "fc3 weights");
+
                 }
             }
         }

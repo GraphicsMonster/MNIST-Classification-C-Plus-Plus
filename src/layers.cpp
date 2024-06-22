@@ -56,15 +56,24 @@ class FCLayer
 
         }
 
+        vector<vector<double>> get_weights() {
+            return this->weights;
+        }
+
         void update_params(double lr){
+            double clip_value = 5.0;
             for(int i = 0; i<this->weights.size(); i++){
                 for(int j = 0; j<this->weights[0].size(); j++){
-                    this->weights[i][j] -= lr * this->weight_der[i][j];
+                    double gradient = this->weight_der[i][j];
+                    gradient = max(min(gradient, clip_value), -clip_value);
+                    this->weights[i][j] -= lr * gradient;
                 }
             }
 
             for (size_t i = 0; i < biases.size(); ++i) {
-                biases[i] -= lr * this->bias_der[i];
+                double gradient = this->bias_der[i];
+                gradient = max(min(gradient, clip_value), -clip_value);
+                biases[i] -= lr * gradient;
             }
         }
 
